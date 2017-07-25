@@ -22,8 +22,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #=============================================================================
 
-from ctypes import c_int8
-
 class RFE6GEN_CalibrationData:
     """note this is shared with RFEGenTest
     """
@@ -412,12 +410,6 @@ class RFE6GEN_CalibrationData:
 
         if (not sLine):
             return sReport
-
-        if nSize < 164:
-            return sReport
-            
-        # skip leading '$q'
-        nSize -=2 
 
         #Values using 10*delta from the value delivered when compared with 30dBm.
         #For instance if value delivered for a frequency is -28.5dBm, that is a +1.5dB difference
