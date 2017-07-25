@@ -5,7 +5,7 @@
 
 #============================================================================
 #RF Explorer Python Libraries - A Spectrum Analyzer for everyone!
-#Copyright © 2010-16 Ariel Rocholl, www.rf-explorer.com
+#Copyright © 2010-17 Ariel Rocholl, www.rf-explorer.com
 #
 #This application is free software; you can redistribute it and/or
 #modify it under the terms of the GNU Lesser General Public
@@ -397,13 +397,12 @@ class RFE6GEN_CalibrationData:
 		"""
         self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM = None
 
-    def InitializeCal(self, nSize, sLine, sReport):
+    def InitializeCal(self, nSize, sLine):
         """Initialize calibration data collection 
         
         Parameters:   
             nSize   -- Size of the collection
             sLine   -- Line of text to process and create the collection
-            sReport -- Embedded calibration Signal Generator data text
         Returns:
             String Embedded calibration Signal Generator data received
 		"""
@@ -425,11 +424,9 @@ class RFE6GEN_CalibrationData:
         #therefore a 1.5*10=15 value. If the value delivered is -33.2 that is a -3.2dB difference
         #therefore a -32 value.
 
-        self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM =\
-                    [ (-30.0 + float( c_int8( ord(c) ).value ) / 10.0) for c in sLine[2:] ]
-            
         for nInd in range(nSize):
-            if nInd and ((nInd % 16) == 0):
+            self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM[nInd] = -30.0 + ord(sLine[nInd + 3]) / 10.0
+            if ((nInd % 16) == 0):
                 sReport += '\n'
             sReport += '{:04.1f}'.format(self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM[nInd]) 
             if (nInd < nSize - 1):
@@ -450,7 +447,7 @@ class RFE6GEN_CalibrationData:
         if (self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM):
             nFreqInd = self.GetClosestFrequencyIndex(dFrequencyMHZ)
             if (nFreqInd >= 0):
-                arrReturn = [0.0]*8
+                arrReturn = [0.0] * 8
                 dValue30DBM = self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM[nFreqInd]
 
                 arrReturn[0] = dValue30DBM + self.m_arrDeltaAmplitude[nFreqInd][2]
@@ -476,7 +473,7 @@ class RFE6GEN_CalibrationData:
         nFreqInd = 0
         if (self.m_arrSignalGeneratorEmbeddedCalibrationActual30DBM):
             #search by brute force, if this is considered too slow, can be replace by binary search or something else such a hash
-            for nInd in range(len(self.m_arrSignalGeneratorCalRanges_KHZ)-1, 0, -1):
+            for nInd in range(len(self.m_arrSignalGeneratorCalRanges_KHZ) - 1, 0, -1):
                 dStartFreqMHZ = self.m_arrSignalGeneratorCalRanges_KHZ[nInd] / 1000.0
                 if (dStartFreqMHZ <= dFrequencyMHZ):
                     nFreqInd = nInd
